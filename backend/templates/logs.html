@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block page_title %}System Logs{% endblock %}
+
+{% block content %}
+<!-- Filtering & Search Action Bar -->
+<div class="action-bar bg-glass">
+    <div class="bar-left">
+        <div class="search-box">
+            <i data-lucide="search"></i>
+            <input type="text" id="log-ip-search" placeholder="Search by IP Address...">
+        </div>
+        
+        <div class="filter-group">
+            <select id="log-status-filter">
+                <option value="all">All Statuses</option>
+                <option value="Online">Online Only</option>
+                <option value="Offline">Offline Only</option>
+            </select>
+        </div>
+    </div>
+    
+    <div class="bar-right">
+        <!-- Optional log options could be added here -->
+    </div>
+</div>
+
+<!-- Raw Logs Table Card -->
+<div class="content-card bg-glass mt-6">
+    <div class="table-container">
+        <table class="data-table" id="logs-table">
+            <thead>
+                <tr>
+                    <th>Log ID</th>
+                    <th>Device ID</th>
+                    <th>IP Address</th>
+                    <th>Status</th>
+                    <th>Latency</th>
+                    <th>Packet Loss</th>
+                    <th>Checked At</th>
+                </tr>
+            </thead>
+            <tbody id="logs-table-body">
+                <tr>
+                    <td colspan="7" class="text-center text-muted py-8">
+                        <i data-lucide="loader-2" class="animate-spin text-muted mb-2 inline-block"></i>
+                        <p>Loading ping logs...</p>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    
+    <!-- Table Pagination -->
+    <div class="pagination-footer">
+        <div class="pagination-info">
+            Showing <span id="pag-start">0</span> to <span id="pag-end">0</span> of <span id="pag-total">0</span> entries
+        </div>
+        <div class="pagination-controls">
+            <button id="btn-prev" class="btn btn-secondary btn-sm" disabled>
+                <i data-lucide="chevron-left"></i>
+                <span>Previous</span>
+            </button>
+            <span class="page-indicator" id="page-num-indicator">Page 1</span>
+            <button id="btn-next" class="btn btn-secondary btn-sm" disabled>
+                <span>Next</span>
+                <i data-lucide="chevron-right"></i>
+            </button>
+        </div>
+    </div>
+</div>
+{% endblock %}

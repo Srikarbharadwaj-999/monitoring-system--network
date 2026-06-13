@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+
+{% block page_title %}Device Details: {{ device.device_name }}{% endblock %}
+
+{% block content %}
+<!-- Back to Devices Link -->
+<div class="mb-6">
+    <a href="/devices" class="back-link">
+        <i data-lucide="arrow-left"></i>
+        <span>Back to Devices list</span>
+    </a>
+</div>
+
+<!-- Grid Layout: Metadata and Real-time Chart -->
+<div class="detail-grid">
+    <!-- Info Column -->
+    <div class="content-card bg-glass">
+        <div class="card-header border-b">
+            <div class="header-title">
+                <i data-lucide="info" class="text-primary"></i>
+                <h2>Device Specifications</h2>
+            </div>
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <button class="btn btn-primary btn-sm" id="force-ping-btn" style="display: flex; align-items: center; gap: 6px;">
+                    <i data-lucide="refresh-cw"></i>
+                    <span>Ping Now</span>
+                </button>
+                <span
+                    class="badge {% if device.current_status == 'Online' %}badge-success{% else %}badge-danger{% endif %} text-sm"
+                    id="detail-status">
+                    {{ device.current_status }}
+                </span>
+            </div>
+        </div>
+
+        <div class="detail-info-list">
+            <div class="info-row">
+                <span class="label">IP Address</span>
+                <span class="value" id="detail-ip">{{ device.ip_address }}</span>
+            </div>
+            <div class="info-row" style="display: none;">
+                <span class="label">Hostname</span>
+                <span class="value">{{ device.hostname or "N/A" }}</span>
+            </div>
+            <div class="info-row" style="display: none;">
+                <span class="label">MAC Address</span>
+                <span class="value">{{ device.mac_address or "N/A" }}</span>
+            </div>
+            <div class="info-row">
+                <span class="label">Device Type</span>
+                <span class="value">
+                    <span class="type-pill">
+                        <i data-lucide="{% if device.device_type == 'Server' %}hard-drive{% elif device.device_type == 'Router' %}router{% elif device.device_type == 'Printer' %}printer{% elif device.device_type == 'Camera' %}video{% elif device.device_type == 'Mobile' %}smartphone{% else %}laptop{% endif %}"
+                            class="type-icon"></i>
+                        {{ device.device_type }}
+                    </span>
+                </span>
+            </div>
+            <div class="info-row">
+                <span class="label">Location</span>
+                <span class="value">{{ device.location or "N/A" }}</span>
+            </div>
+            <div class="info-row">
+                <span class="label">Last Seen</span>
+                <span class="value" id="detail-last-seen">
+                    {% if device.last_seen %}{{ device.last_seen.strftime('%Y-%m-%d %H:%M:%S') }}{% else %}Never{% endif
+                    %}
+                </span>
+            </div>
+            <div class="info-row">
+                <span class="label">Last Checked Latency</span>
+                <span class="value text-warning" id="detail-latency">
+                    {% if device.last_latency_ms is not none %}{{ device.last_latency_ms }} ms{% else %}N/A{% endif %}
+                </span>
+            </div>
+            <div class="info-row">
+                <span class="label">Registered At</span>
+                <span class="value">{{ device.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chart Column -->
+    <div class="content-card bg-glass col-span-2">
+        <div class="card-header">
+            <div class="header-title">
+                <i data-lucide="trending-up" class="text-primary"></i>
+                <h2>Latency Trend (Last 30 Pings)</h2>
+            </div>
+        </div>
+        <div class="card-body chart-wrapper">
+            <canvas id="latencyChart"></canvas>
+        </div>
+    </div>
+</div>
+
+<!-- Downtime History Table -->
+<div class="content-card bg-glass mt-6">
+    <div class="card-header border-b">
+        <div class="header-title">
+            <i data-lucide="history" class="text-primary"></i>
+            <h2>Downtime & Recovery History</h2>
+        </div>
+    </div>
+
+    <div class="table-container">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Log ID</th>
+                    <th>Went Offline At</th>
+                    <th>Recovered At</th>
+                    <th>Outage Duration</th>
+                    <th>Indicated Reason</th>
+                </tr>
+            </thead>
+            <tbody id="downtime-history-body">
+                <tr>
+                    <td colspan="5" class="text-center text-muted py-6">
+                        No downtime logged for this device.
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    // Embed device ID in page for JS script execution
+    window.currentDeviceId = {{ device.id }};
+</script>
+{% endblock %}

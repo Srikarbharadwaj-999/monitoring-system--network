@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block page_title %}System Settings{% endblock %}
+
+{% block content %}
+<div class="settings-wrapper">
+    <div class="content-card bg-glass max-w-xl">
+        <div class="card-header border-b">
+            <div class="header-title">
+                <i data-lucide="sliders" class="text-primary"></i>
+                <h2>Configuration Settings</h2>
+            </div>
+        </div>
+        
+        <form id="settings-form" class="card-body">
+            <div id="settings-success" class="success-msg-box hidden">
+                <i data-lucide="check-circle"></i>
+                <span>Settings updated successfully!</span>
+            </div>
+            <div id="settings-error" class="error-msg-box hidden"></div>
+            
+            <div class="input-group">
+                <label for="settings-interval">
+                    Background Ping Frequency (Seconds)
+                    <span class="tip">How often to ping each device (between 5 and 300 seconds).</span>
+                </label>
+                <input type="number" id="settings-interval" min="5" max="300" required>
+            </div>
+            
+            <div class="input-group">
+                <label for="settings-subnet">
+                    Default Scanner Subnet
+                    <span class="tip">Default range suggested for network discovery scans.</span>
+                </label>
+                <input type="text" id="settings-subnet" placeholder="e.g. 192.168.1.0/24" required>
+                <p class="suggested-tip">Suggested subnet: <code>{{ suggested_subnet }}</code></p>
+            </div>
+            
+            <div class="form-actions border-t mt-6 pt-4">
+                <button type="submit" class="btn btn-primary" id="save-settings-btn">
+                    <i data-lucide="save"></i>
+                    <span>Save Configurations</span>
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- System Info Panel -->
+    <div class="content-card bg-glass max-w-xl mt-6">
+        <div class="card-header border-b">
+            <div class="header-title">
+                <i data-lucide="database" class="text-primary"></i>
+                <h2>Environment Properties</h2>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="detail-info-list">
+                <div class="info-row">
+                    <span class="label">OS Platform</span>
+                    <span class="value" id="system-os">Detecting...</span>
+                </div>
+                <div class="info-row">
+                    <span class="label">Database Engine</span>
+                    <span class="value">SQLite 3</span>
+                </div>
+                <div class="info-row">
+                    <span class="label">Host System Time</span>
+                    <span class="value" id="system-time">-- : --</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

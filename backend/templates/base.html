@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Network Device Ping Monitoring System</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <!-- ChartJS for device details -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Custom Stylesheet -->
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <i data-lucide="activity" class="logo-icon text-primary animate-pulse"></i>
+                    <span>NetMonitor</span>
+                </div>
+            </div>
+            
+            <nav class="sidebar-menu">
+                <a href="/dashboard" class="menu-item {% if request.url.path == '/dashboard' %}active{% endif %}">
+                    <i data-lucide="layout-dashboard"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="/devices" class="menu-item {% if request.url.path == '/devices' or request.url.path.startswith('/devices/') %}active{% endif %}">
+                    <i data-lucide="cpu"></i>
+                    <span>Devices</span>
+                </a>
+                <a href="/logs" class="menu-item {% if request.url.path == '/logs' %}active{% endif %}">
+                    <i data-lucide="list-collapse"></i>
+                    <span>Logs</span>
+                </a>
+                <a href="/reports" class="menu-item {% if request.url.path == '/reports' %}active{% endif %}">
+                    <i data-lucide="file-text"></i>
+                    <span>Reports</span>
+                </a>
+                <a href="/settings" class="menu-item {% if request.url.path == '/settings' %}active{% endif %}">
+                    <i data-lucide="settings"></i>
+                    <span>Settings</span>
+                </a>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <div class="user-profile">
+                    <div class="user-avatar">
+                        <i data-lucide="user"></i>
+                    </div>
+                    <div class="user-info">
+                        <p class="user-name">{{ user.username }}</p>
+                        <p class="user-role">{{ user.role|capitalize }}</p>
+                    </div>
+                </div>
+                <button id="logout-btn" class="logout-btn" title="Logout">
+                    <i data-lucide="log-out"></i>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Top Header -->
+            <header class="top-header">
+                <div class="header-left">
+                    <h1>{% block page_title %}Dashboard{% endblock %}</h1>
+                </div>
+                <div class="header-right">
+                    <!-- Theme Toggle -->
+                    <button id="theme-toggle" class="theme-toggle" title="Toggle Light/Dark Theme">
+                        <i data-lucide="sun" class="sun-icon"></i>
+                        <i data-lucide="moon" class="moon-icon"></i>
+                    </button>
+                    <!-- Connection Status Indicator -->
+                    <div class="connection-badge online" id="ws-badge">
+                        <span class="pulse-indicator"></span>
+                        <span id="ws-badge-text">Connected</span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Page Body -->
+            <div class="page-body">
+                {% block content %}{% endblock %}
+            </div>
+        </main>
+    </div>
+
+    <!-- Live Toast Alerts Overlay Container -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <!-- Main JavaScript App -->
+    <script>
+        window.currentUserRole = "{{ user.role }}";
+    </script>
+    <script src="/static/app.js"></script>
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+    </script>
+</body>
+</html>

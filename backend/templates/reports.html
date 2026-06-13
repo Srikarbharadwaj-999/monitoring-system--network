@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+
+{% block page_title %}Uptime & Downtime Reports{% endblock %}
+
+{% block content %}
+<!-- Period Selection Bar -->
+<div class="action-bar bg-glass mb-6">
+    <div class="bar-left">
+        <div class="filter-group">
+            <label for="report-days">Reporting Period:</label>
+            <select id="report-days">
+                <option value="1">Last 24 Hours</option>
+                <option value="7">Last 7 Days</option>
+                <option value="30">Last 30 Days</option>
+            </select>
+        </div>
+    </div>
+    
+    <div class="bar-right">
+        <!-- Download actions -->
+    </div>
+</div>
+
+<!-- CSV Downloads Panel -->
+<div class="grid grid-cols-3 gap-6 mb-6">
+    <div class="content-card bg-glass flex flex-row items-center justify-between p-6">
+        <div class="flex items-center">
+            <div class="report-icon bg-success-light mr-4">
+                <i data-lucide="cpu" class="text-success"></i>
+            </div>
+            <div>
+                <h3 class="font-semibold">Devices Export</h3>
+                <p class="text-sm text-muted">All active device inventory</p>
+            </div>
+        </div>
+        <a href="/api/reports/csv/devices" class="btn btn-secondary btn-sm" download>
+            <i data-lucide="download"></i>
+            <span>CSV</span>
+        </a>
+    </div>
+
+    <div class="content-card bg-glass flex flex-row items-center justify-between p-6">
+        <div class="flex items-center">
+            <div class="report-icon bg-info-light mr-4">
+                <i data-lucide="list-collapse" class="text-info"></i>
+            </div>
+            <div>
+                <h3 class="font-semibold">Ping Logs Export</h3>
+                <p class="text-sm text-muted">Raw ping response packets</p>
+            </div>
+        </div>
+        <a href="/api/reports/csv/ping_logs" class="btn btn-secondary btn-sm" download>
+            <i data-lucide="download"></i>
+            <span>CSV</span>
+        </a>
+    </div>
+
+    <div class="content-card bg-glass flex flex-row items-center justify-between p-6">
+        <div class="flex items-center">
+            <div class="report-icon bg-danger-light mr-4">
+                <i data-lucide="alert-triangle" class="text-danger"></i>
+            </div>
+            <div>
+                <h3 class="font-semibold">Downtime Export</h3>
+                <p class="text-sm text-muted">Outage durations & stamps</p>
+            </div>
+        </div>
+        <a href="/api/reports/csv/downtime_logs" class="btn btn-secondary btn-sm" download>
+            <i data-lucide="download"></i>
+            <span>CSV</span>
+        </a>
+    </div>
+</div>
+
+<!-- Detailed Uptime Availability Metrics -->
+<div class="content-card bg-glass">
+    <div class="card-header border-b">
+        <div class="header-title">
+            <i data-lucide="award" class="text-primary"></i>
+            <h2>Device Availability Metrics</h2>
+        </div>
+    </div>
+    
+    <div class="table-container">
+        <table class="data-table" id="reports-table">
+            <thead>
+                <tr>
+                    <th>IP Address</th>
+                    <th>Device Type</th>
+                    <th>Availability %</th>
+                    <th>Accumulated Downtime</th>
+                    <th>Avg Latency</th>
+                    <th>Service Level</th>
+                </tr>
+            </thead>
+            <tbody id="reports-table-body">
+                <tr>
+                    <td colspan="6" class="text-center text-muted py-8">
+                        <i data-lucide="loader-2" class="animate-spin text-muted mb-2 inline-block"></i>
+                        <p>Aggregating availability metrics...</p>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

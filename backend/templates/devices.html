@@ -1,0 +1,180 @@
+{% extends "base.html" %}
+
+{% block page_title %}Manage Devices{% endblock %}
+
+{% block content %}
+<!-- Filtering & Search Action Bar -->
+<div class="action-bar bg-glass">
+    <div class="bar-left">
+        <div class="search-box">
+            <i data-lucide="search"></i>
+            <input type="text" id="device-search" placeholder="Search by IP, Hostname, Name...">
+        </div>
+        
+        <div class="filter-group">
+            <select id="filter-status">
+                <option value="all">All Statuses</option>
+                <option value="Online">Online</option>
+                <option value="Offline">Offline</option>
+            </select>
+            
+            <select id="filter-type">
+                <option value="all">All Device Types</option>
+                <option value="Laptop">Laptop</option>
+                <option value="PC">PC</option>
+                <option value="Printer">Printer</option>
+                <option value="Router">Router</option>
+                <option value="Camera">Camera</option>
+                <option value="Server">Server</option>
+                <option value="Mobile">Mobile</option>
+            </select>
+        </div>
+    </div>
+    
+    <div class="bar-right">
+        <button class="btn btn-primary" onclick="openAddModal()">
+            <i data-lucide="plus-circle"></i>
+            <span>Add Device</span>
+        </button>
+    </div>
+</div>
+
+<!-- Main Devices List -->
+<div class="content-card bg-glass mt-6">
+    <div class="table-container">
+        <table class="data-table" id="devices-mgmt-table">
+            <thead>
+                <tr>
+                    <th>IP Address</th>
+                    <th>Device Type</th>
+                    <th>Location</th>
+                    <th>Status</th>
+                    <th>Latency</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="devices-mgmt-body">
+                <tr>
+                    <td colspan="6" class="text-center text-muted py-8">
+                        <i data-lucide="loader-2" class="animate-spin text-muted mb-2 inline-block"></i>
+                        <p>Loading devices list...</p>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Modal: Add Device -->
+<div id="add-modal" class="modal-backdrop hidden">
+    <div class="modal bg-glass">
+        <div class="modal-header">
+            <h2>Add New Device</h2>
+            <button class="modal-close" onclick="closeAddModal()"><i data-lucide="x"></i></button>
+        </div>
+        <form id="add-device-form" class="modal-body">
+            <div id="add-error" class="error-msg-box hidden"></div>
+            
+            <div class="input-group" style="display: none;">
+                <label for="add-name">Device Name</label>
+                <input type="text" id="add-name" placeholder="e.g. Core Switch">
+            </div>
+            
+            <div class="input-group">
+                <label for="add-ip">IP Address</label>
+                <input type="text" id="add-ip" required placeholder="e.g. 192.168.1.1">
+            </div>
+            
+            <div class="input-group" style="display: none;">
+                <label for="add-hostname">Hostname (Optional)</label>
+                <input type="text" id="add-hostname" placeholder="e.g. router.local">
+            </div>
+
+            <div class="input-group" style="display: none;">
+                <label for="add-mac">MAC Address (Optional)</label>
+                <input type="text" id="add-mac" placeholder="e.g. aa:bb:cc:dd:ee:ff">
+            </div>
+            
+            <div class="input-group">
+                <label for="add-type">Device Type</label>
+                <select id="add-type" required>
+                    <option value="Laptop">Laptop</option>
+                    <option value="PC">PC</option>
+                    <option value="Printer">Printer</option>
+                    <option value="Router">Router</option>
+                    <option value="Camera">Camera</option>
+                    <option value="Server" selected>Server</option>
+                    <option value="Mobile">Mobile</option>
+                </select>
+            </div>
+            
+            <div class="input-group">
+                <label for="add-location">Location (Optional)</label>
+                <input type="text" id="add-location" placeholder="e.g. Floor 1 Rack A">
+            </div>
+            
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeAddModal()">Cancel</button>
+                <button type="submit" class="btn btn-primary">Save Device</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Modal: Edit Device -->
+<div id="edit-modal" class="modal-backdrop hidden">
+    <div class="modal bg-glass">
+        <div class="modal-header">
+            <h2>Edit Device</h2>
+            <button class="modal-close" onclick="closeEditModal()"><i data-lucide="x"></i></button>
+        </div>
+        <form id="edit-device-form" class="modal-body">
+            <input type="hidden" id="edit-id">
+            <div id="edit-error" class="error-msg-box hidden"></div>
+            
+            <div class="input-group" style="display: none;">
+                <label for="edit-name">Device Name</label>
+                <input type="text" id="edit-name" placeholder="e.g. Core Switch">
+            </div>
+            
+            <div class="input-group">
+                <label for="edit-ip">IP Address</label>
+                <input type="text" id="edit-ip" required placeholder="e.g. 192.168.1.1">
+            </div>
+            
+            <div class="input-group" style="display: none;">
+                <label for="edit-hostname">Hostname (Optional)</label>
+                <input type="text" id="edit-hostname" placeholder="e.g. router.local">
+            </div>
+
+            <div class="input-group" style="display: none;">
+                <label for="edit-mac">MAC Address (Optional)</label>
+                <input type="text" id="edit-mac" placeholder="e.g. aa:bb:cc:dd:ee:ff">
+            </div>
+            
+            <div class="input-group">
+                <label for="edit-type">Device Type</label>
+                <select id="edit-type" required>
+                    <option value="Laptop">Laptop</option>
+                    <option value="PC">PC</option>
+                    <option value="Printer">Printer</option>
+                    <option value="Router">Router</option>
+                    <option value="Camera">Camera</option>
+                    <option value="Server">Server</option>
+                    <option value="Mobile">Mobile</option>
+                </select>
+            </div>
+            
+            <div class="input-group">
+                <label for="edit-location">Location (Optional)</label>
+                <input type="text" id="edit-location" placeholder="e.g. Floor 1 Rack A">
+            </div>
+            
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeEditModal()">Cancel</button>
+                <button type="submit" class="btn btn-primary">Save Changes</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

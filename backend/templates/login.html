@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - NetMonitor</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <!-- CSS Stylesheet -->
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body class="login-body">
+    <div class="login-bg-glow"></div>
+    <div class="login-wrapper">
+        <div class="login-card">
+            <div class="login-header">
+                <div class="logo">
+                    <i data-lucide="activity" class="logo-icon text-primary animate-pulse"></i>
+                    <span>NetMonitor</span>
+                </div>
+                <h2>Welcome Back</h2>
+                <p>Sign in to monitor network device status</p>
+            </div>
+            
+            <form id="login-form" class="login-form">
+                <div id="login-error" class="login-error-msg hidden">
+                    <i data-lucide="alert-circle"></i>
+                    <span id="error-text">Incorrect username or password.</span>
+                </div>
+                
+                <!-- Role Selection Control -->
+                <div class="input-group">
+                    <label>Sign In As</label>
+                    <div class="role-selector">
+                        <div class="role-option active" id="role-admin">
+                            <i data-lucide="shield-check"></i>
+                            <span>Administrator</span>
+                        </div>
+                        <div class="role-option" id="role-manager">
+                            <i data-lucide="user-cog"></i>
+                            <span>Manager</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="username">Username</label>
+                    <div class="input-with-icon">
+                        <i data-lucide="user"></i>
+                        <input type="text" id="username" placeholder="Enter username" required autocomplete="username" value="admin">
+                    </div>
+                </div>
+                
+                <div class="input-group">
+                    <label for="password">Password</label>
+                    <div class="input-with-icon">
+                        <i data-lucide="lock"></i>
+                        <input type="password" id="password" placeholder="Enter password" required autocomplete="current-password" value="admin123">
+                    </div>
+                </div>
+                
+                <button type="submit" class="btn btn-primary btn-block" id="login-submit-btn">
+                    <span>Sign In</span>
+                    <i data-lucide="arrow-right"></i>
+                </button>
+            </form>
+            
+            <div class="login-footer">
+                <p>Default credentials: <code>admin / admin123</code></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Login JS handler -->
+    <script>
+        // Set default theme from localStorage
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+        
+        // Role Selection Handler
+        const roleAdmin = document.getElementById('role-admin');
+        const roleManager = document.getElementById('role-manager');
+        const usernameInput = document.getElementById('username');
+        const passwordInput = document.getElementById('password');
+
+        roleAdmin.addEventListener('click', () => {
+            roleAdmin.classList.add('active');
+            roleManager.classList.remove('active');
+            usernameInput.value = 'admin';
+            passwordInput.value = 'admin123';
+        });
+
+        roleManager.addEventListener('click', () => {
+            roleManager.classList.add('active');
+            roleAdmin.classList.remove('active');
+            usernameInput.value = 'manager';
+            passwordInput.value = 'manager123';
+        });
+
+        // Form handling
+        const form = document.getElementById('login-form');
+        const errDiv = document.getElementById('login-error');
+        const errText = document.getElementById('error-text');
+        const submitBtn = document.getElementById('login-submit-btn');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            errDiv.classList.add('hidden');
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            submitBtn.disabled = true;
+            submitBtn.querySelector('span').innerText = 'Signing in...';
+
+            try {
+                const response = await fetch('/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    // Redirect to dashboard
+                    window.location.href = '/dashboard';
+                } else {
+                    errText.innerText = data.detail || 'Failed to authenticate.';
+                    errDiv.classList.remove('hidden');
+                }
+            } catch (err) {
+                errText.innerText = 'Network error. Please try again.';
+                errDiv.classList.remove('hidden');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.querySelector('span').innerText = 'Sign In';
+            }
+        });
+
+        // Initialize icons
+        lucide.createIcons();
+    </script>
+</body>
+</html>
